@@ -30,12 +30,21 @@ export default function Home() {
     <main className="h-screen flex items-center justify-center">
       <div className="h-72 w-4/12 rounded-md bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-1">
         <div className=" h-full w-full bg-gray-800 flex items-center justify-center ">
+        <div className="flex-col">
+          {temperature !== null ? (
+              <h1 className="text-white text-5xl">{temperature}°C</h1>
+            ) : (
+              <p className="text-white"></p>
+            )}
+           
+           
+          </div>
           <input
             type="text"
             placeholder="Search city..."
             value={city}
             onChange={handleCityChange}
-            className="flex w-4/12 h-8 bg-gray-500 text-white pl-1"
+            className="flex w-4/12 h-8 bg-gray-500 text-white pl-1 rounded-md   "
           />
           <button onClick={handleFetchWeather}>
             {" "}
@@ -44,17 +53,10 @@ export default function Home() {
               width={32}
               height={32}
               alt="Picture of the author"
-              className="bg-white"
+              className="bg-gradient-to-r from-violet-700 via-violet-500 to-pink-500 ml-1 rounded-md   "
             />
           </button>
-          <div className="flex-col">
-            <h1 className="text-white">{cityName}</h1>
-            {temperature !== null ? (
-              <h1 className="text-white">Temperature: {temperature}°C</h1>
-            ) : (
-              <p className="text-white"></p>
-            )}
-          </div>
+          <h1 className="text-white">{cityName}</h1>
         </div>
       </div>
     </main>
