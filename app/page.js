@@ -5,7 +5,8 @@ import axios from "axios";
 import { toast } from "react-toastify"; // Importuj toast z react-toastify
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import 'animate.css';
+import "animate.css";
+import { DateTime } from "luxon";
 
 export default function Home() {
   const [city, setCity] = useState("");
@@ -13,9 +14,16 @@ export default function Home() {
   const [temperature, setTemperature] = useState(null);
   const [currentWeather, setCurrentWeather] = useState(null);
   const [isNight, setIsNight] = useState(false);
+  const [timezone, setTimezone] = useState("");
+  const [country, setCountry] = useState("");
+  const [isAnimating, setIsAnimating] = useState(false);
   const handleCityChange = (event) => {
     setCity(event.target.value);
     toast.dismiss();
+  };
+
+  const removeAnimationClasses = () => {
+    setIsAnimating(false);
   };
   const handleFetchWeather = () => {
     const api = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=ec35b4d54a274f524fa567c861ac8792`;
@@ -23,12 +31,18 @@ export default function Home() {
     axios
       .get(api)
       .then((response) => {
-        const { main, name, weather } = response.data;
+        const { main, name, weather, timezone, sys } = response.data;
         const { temp } = main;
         setTemperature(temp);
         setCityName(name);
         setCurrentWeather(weather[0].main);
         console.log(weather);
+        setIsAnimating(true);
+        setTimezone(timezone);
+        setCountry(sys.country);
+        
+
+        setTimeout(removeAnimationClasses, 1000);
       })
       .catch((error) => {
         console.error("Error fetching weather data:", error);
@@ -49,6 +63,10 @@ export default function Home() {
         return "/rain.png";
       case "Clouds":
         return "/clouds.png";
+      case "Mist":
+        return isNight ? "/fogNight.png" : "/fog.png";
+      case "Thunder":
+        return "/thunder.png";
     }
   };
 
@@ -61,15 +79,14 @@ export default function Home() {
 
   //check if it is night or day
   useEffect(() => {
-    const now = new Date();
-    const hours = now.getHours();
-
-    setIsNight(hours >= 20 || hours < 6);
-  }, []);
+    const now = DateTime.now().setZone(timezone); // Użyj luxon do ustawienia strefy czasowej
+    const hour = now.hour;
+    setIsNight(hour >= 20 || hour < 6);
+  }, [timezone]); 
 
   return (
-    <main className="h-screen flex items-center justify-center flex-col" >
-      <h1 className="flex font-extrabold text-white mb-2  2xl:text-8xl md:text-8xl sm:text-5xl animate__animated animate__fadeInDown " >
+    <main className="h-screen flex items-center justify-center flex-col">
+      <h1 className="flex font-extrabold text-white mb-2  2xl:text-8xl md:text-8xl sm:text-5xl animate__animated animate__fadeInDown ">
         Weather
       </h1>
       <div className="h-72 2xl:w-4/12 md:w-7/12 sm:w-6/12  rounded-lg bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-1 ">
@@ -83,17 +100,20 @@ export default function Home() {
                 alt="Weather Icon"
                 className="mx-auto mb-2 animate__animated animate__zoomIn"
               />
-              <h1 className="text-white text-4xl whitespace-nowrap animate__animated animate__fadeInDown">
-                {cityName}
+              <h1 className="text-white text-4xl whitespace-nowrap animate__animated animate__fadeInDown ml-1 ">
+                {cityName}, {country}
               </h1>
+
               {temperature !== null ? (
-                <h1 className="text-white text-2xl mt-2 animate__animated animate__fadeInDown">
+                <h1 className="text-white text-2xl mt-2 animate__animated animate__fadeInDown ml-1">
                   {temperature.toFixed(1)}°C
                 </h1>
               ) : (
                 <p className="text-white"></p>
               )}
-              <h1 className="text-white animate__animated animate__fadeInDown">{currentWeather}</h1>
+              <h1 className="text-white animate__animated animate__fadeInDown ml-1">
+                {currentWeather}
+              </h1>
             </div>
           )}
           <input
