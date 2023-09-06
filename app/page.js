@@ -29,7 +29,6 @@ export default function Home() {
       });
   };
 
-
   const getWeatherImage = (description) => {
     switch (description) {
       case "Snow":
@@ -50,35 +49,40 @@ export default function Home() {
 
   return (
     <main className="h-screen flex items-center justify-center flex-col">
-      <h1 className="flex font-extrabold text-white  2xl:text-8xl md:text-8xl sm:text-5xl  ">Weather</h1>
-      <div className="h-72 2xl:w-4/12 md:w-7/12 sm:w-9/12  rounded-md bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-1" >
-        <div className=" h-full w-full bg-gray-800 flex items-center justify-center ">
+      <h1 className="flex font-extrabold text-white  2xl:text-8xl md:text-8xl sm:text-5xl  ">
+        Weather
+      </h1>
+      <div className="h-72 2xl:w-4/12 md:w-7/12 sm:w-9/12  rounded-lg bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-1">
+        <div className=" h-full w-full bg-gray-800 flex items-center rounded-lg justify-center ">
           <div className="flex-col mr-10">
-          {currentWeather && (
+            {currentWeather && (
               <Image
                 src={getWeatherImage(currentWeather)}
                 width={96}
                 height={96}
                 alt="Weather Icon"
-                  className="mx-auto mb-2"
-                />
-                )}
-                <h1 className="text-white text-4xl whitespace-nowrap">{cityName}</h1>
+                className="mx-auto mb-2"
+              />
+            )}
+            <h1 className="text-white text-4xl whitespace-nowrap">
+              {cityName}
+            </h1>
             {temperature !== null ? (
-              <h1 className="text-white text-2xl mt-2">{temperature.toFixed(1)}°C</h1>
+              <h1 className="text-white text-2xl mt-2">
+                {temperature.toFixed(1)}°C
+              </h1>
             ) : (
               <p className="text-white"></p>
             )}
-          
           </div>
-          
+
           <input
             type="text"
             placeholder="Search city..."
             value={city}
             onKeyPress={handleKeyPress}
             onChange={handleCityChange}
-            className="flex w-4/12 h-8 bg-gray-500 text-white pl-1 rounded-md   "
+            className="flex w-4/12 h-8 bg-gray-600 text-white pl-1 rounded-l-lg outline-none transition focus:outline-purple focus:border-purple-500 focus:bg-gray-200 focus:text-black  "
           />
           <button onClick={handleFetchWeather} className="mr-2">
             {" "}
@@ -87,13 +91,14 @@ export default function Home() {
               width={32}
               height={32}
               alt="Picture of the author"
-              className="bg-gradient-to-r from-violet-700 via-violet-500 to-pink-500 ml-1 rounded-md hover:animate-pulse   "
+              className="bg-violet-400 hover:bg-violet-500 rounded-r-lg    "
             />
           </button>
-          
-          
-        
         </div>
+      </div>
+
+      <div class="absolute bottom-0 right-0 mr-2 font-bold text-sm pointer-events-none">
+        Copyright © 2023 Michał Obrębski. All Rights Reserved
       </div>
     </main>
   );
