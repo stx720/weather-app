@@ -2,14 +2,19 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
+import { toast } from "react-toastify"; // Importuj toast z react-toastify
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Home() {
   const [city, setCity] = useState("");
   const [cityName, setCityName] = useState(null);
   const [temperature, setTemperature] = useState(null);
   const [currentWeather, setCurrentWeather] = useState(null);
+  const [isNight, setIsNight] = useState(false);
   const handleCityChange = (event) => {
     setCity(event.target.value);
+    toast.dismiss();
   };
   const handleFetchWeather = () => {
     const api = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=ec35b4d54a274f524fa567c861ac8792`;
@@ -26,6 +31,10 @@ export default function Home() {
       })
       .catch((error) => {
         console.error("Error fetching weather data:", error);
+        toast.warning("City not found. Please enter a valid city name.", {
+          position: "top-right", // Pozycja toastu
+          autoClose: 5000, // Czas wyświetlania w milisekundach (5 sekund)
+        });
       });
   };
 
@@ -34,28 +43,38 @@ export default function Home() {
       case "Snow":
         return "/snow.png";
       case "Clear":
-        return "/clear.png";
+        return isNight ? "/clearNight.png" : "/clear.png";
       case "Rain":
         return "/rain.png";
       case "Clouds":
         return "/clouds.png";
     }
   };
+
+  //enter key event handler
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
-      handleFetchWeather(); // Wywołaj funkcję pobierania pogody po naciśnięciu Enter
+      handleFetchWeather();
     }
   };
+
+  //check if it is night or day
+  useEffect(() => {
+    const now = new Date();
+    const hours = now.getHours();
+
+    setIsNight(hours >= 20 || hours < 6);
+  }, []);
 
   return (
     <main className="h-screen flex items-center justify-center flex-col">
       <h1 className="flex font-extrabold text-white  2xl:text-8xl md:text-8xl sm:text-5xl  ">
         Weather
       </h1>
-      <div className="h-72 2xl:w-4/12 md:w-7/12 sm:w-9/12  rounded-lg bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-1">
+      <div className="h-72 2xl:w-4/12 md:w-7/12 sm:w-6/12  rounded-lg bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-1">
         <div className=" h-full w-full bg-gray-800 flex items-center rounded-lg justify-center ">
-          <div className="flex-col mr-10">
-            {currentWeather && (
+          {cityName && (
+            <div className="flex-col mr-10">
               <Image
                 src={getWeatherImage(currentWeather)}
                 width={96}
@@ -63,26 +82,26 @@ export default function Home() {
                 alt="Weather Icon"
                 className="mx-auto mb-2"
               />
-            )}
-            <h1 className="text-white text-4xl whitespace-nowrap">
-              {cityName}
-            </h1>
-            {temperature !== null ? (
-              <h1 className="text-white text-2xl mt-2">
-                {temperature.toFixed(1)}°C
+              <h1 className="text-white text-4xl whitespace-nowrap">
+                {cityName}
               </h1>
-            ) : (
-              <p className="text-white"></p>
-            )}
-          </div>
-
+              {temperature !== null ? (
+                <h1 className="text-white text-2xl mt-2">
+                  {temperature.toFixed(1)}°C
+                </h1>
+              ) : (
+                <p className="text-white"></p>
+              )}
+              <h1 className="text-white ">{currentWeather}</h1>
+            </div>
+          )}
           <input
             type="text"
             placeholder="Search city..."
             value={city}
             onKeyPress={handleKeyPress}
             onChange={handleCityChange}
-            className="flex w-4/12 h-8 bg-gray-600 text-white pl-1 rounded-l-lg outline-none transition focus:outline-purple focus:border-purple-500 focus:bg-gray-200 focus:text-black  "
+            className=" flex 2xl:text-base md:text-sm sm:text-xs w-4/12 h-8 bg-gray-600 text-white pl-1 rounded-l-lg outline-none transition focus:outline-purple focus:border-purple-500 focus:bg-gray-200 focus:text-black  "
           />
           <button onClick={handleFetchWeather} className="mr-2">
             {" "}
@@ -100,6 +119,7 @@ export default function Home() {
       <div class="absolute bottom-0 right-0 mr-2 font-bold text-sm pointer-events-none">
         Copyright © 2023 Michał Obrębski. All Rights Reserved
       </div>
+      <ToastContainer />
     </main>
   );
 }
