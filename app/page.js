@@ -65,7 +65,7 @@ export default function Home() {
         return "/clouds.png";
       case "Mist":
         return isNight ? "/fogNight.png" : "/fog.png";
-      case "Thunder":
+      case "Thunderstorm":
         return "/thunder.png";
     }
   };
@@ -85,11 +85,11 @@ export default function Home() {
   }, [timezone]); 
 
   return (
-    <main className="h-screen flex items-center justify-center flex-col">
+    <main className="h-screen flex items-center justify-center flex-col  ">
       <h1 className="flex font-extrabold text-white mb-2  2xl:text-8xl md:text-8xl sm:text-5xl animate__animated animate__fadeInDown ">
         Weather
       </h1>
-      <div className="h-72 2xl:w-4/12 md:w-7/12 sm:w-6/12  rounded-lg bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-1 ">
+      <div className="h-72 2xl:w-4/12 md:w-7/12 sm:w-6/12  rounded-lg bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-1  ">
         <div className=" h-full w-full bg-gray-800 flex items-center rounded-lg justify-center ">
           {cityName && (
             <div className="flex-col mr-10 ">
