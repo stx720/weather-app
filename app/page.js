@@ -86,10 +86,10 @@ export default function Home() {
 
   return (
     <main className="h-screen flex items-center justify-center flex-col  ">
-      <h1 className="flex font-extrabold text-white mb-2  2xl:text-8xl md:text-8xl sm:text-5xl animate__animated animate__fadeInDown ">
+      <h1 className="flex font-extrabold text-white mb-2 2xl:text-8xl text-7xl animate__animated animate__fadeInDown ">
         Weather
       </h1>
-      <div className="h-72 2xl:w-4/12 md:w-7/12 sm:w-6/12  rounded-lg bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-1  ">
+      <div className="h-72 w-11/12 2xl:w-4/12 rounded-lg bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-1  ">
         <div className=" h-full w-full bg-gray-800 flex items-center rounded-lg justify-center ">
           {cityName && (
             <div className="flex-col mr-10 ">
@@ -100,18 +100,18 @@ export default function Home() {
                 alt="Weather Icon"
                 className="mx-auto mb-2 animate__animated animate__zoomIn"
               />
-              <h1 className="text-white text-4xl whitespace-nowrap animate__animated animate__fadeInDown ml-1 ">
+              <h1 className="text-white 2xl:text-4xl text-base whitespace-nowrap animate__animated animate__fadeInDown ml-1 ">
                 {cityName}, {country}
               </h1>
 
               {temperature !== null ? (
-                <h1 className="text-white text-2xl mt-2 animate__animated animate__fadeInDown ml-1">
+                <h1 className="text-white 2xl:text-2xl text-base mt-2 animate__animated animate__fadeInDown ml-1">
                   {temperature.toFixed(1)}°C
                 </h1>
               ) : (
                 <p className="text-white"></p>
               )}
-              <h1 className="text-white animate__animated animate__fadeInDown ml-1">
+              <h1 className="text-white 2xl:text-base text-sm animate__animated animate__fadeInDown ml-1">
                 {currentWeather}
               </h1>
             </div>
@@ -122,7 +122,7 @@ export default function Home() {
             value={city}
             onKeyPress={handleKeyPress}
             onChange={handleCityChange}
-            className="animate__animated animate__fadeInDown flex 2xl:text-base md:text-sm sm:text-xs w-4/12 h-8 bg-gray-600 text-white pl-1 rounded-l-lg outline-none transition focus:outline-purple focus:border-purple-500 focus:bg-gray-200 focus:text-black  "
+            className="animate__animated animate__fadeInDown flex 2xl:text-base text-sm w-4/12 h-8 bg-gray-600 text-white pl-1 rounded-l-lg outline-none transition focus:outline-purple focus:border-purple-500 focus:bg-gray-200 focus:text-black  "
           />
           <button onClick={handleFetchWeather} className="mr-2">
             {" "}
