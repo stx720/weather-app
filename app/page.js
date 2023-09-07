@@ -79,7 +79,7 @@ export default function Home() {
 
   //check if it is night or day
   useEffect(() => {
-    const now = DateTime.now().setZone(timezone); // użyto luxon do ustawienia strefy czasowej
+    const now = DateTime.now().setZone(timezone); // used luxon to check the timezone
     const hour = now.hour;
     setIsNight(hour >= 18 || hour < 4);
   }, [timezone]);
@@ -131,7 +131,7 @@ export default function Home() {
               width={32}
               height={32}
               alt="Picture of the author"
-              className="bg-violet-400 hover:bg-violet-500 rounded-r-lg animate__animated animate__fadeInDown   "
+              className="bg-blue-300 hover:bg-blue-500 rounded-r-lg animate__animated animate__fadeInDown   "
             />
           </button>
         </div>
