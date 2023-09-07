@@ -89,7 +89,7 @@ export default function Home() {
       <h1 className="flex font-extrabold text-white mb-2 2xl:text-8xl text-7xl animate__animated animate__fadeInDown ">
         Weather
       </h1>
-      <div className="h-72 w-11/12 2xl:w-4/12 rounded-lg bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-1  ">
+      <div className="2xl:h-72 h-60 w-11/12 2xl:w-4/12 rounded-lg bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-1  ">
         <div className=" h-full w-full bg-gray-800 flex items-center rounded-lg justify-center ">
           {cityName && (
             <div className="flex-col mr-10 ">
