@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
-import { toast } from "react-toastify"; // Importuj toast z react-toastify
+import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "animate.css";
@@ -36,19 +36,17 @@ export default function Home() {
         setTemperature(temp);
         setCityName(name);
         setCurrentWeather(weather[0].main);
-        console.log(weather);
         setIsAnimating(true);
         setTimezone(timezone);
         setCountry(sys.country);
-        
 
         setTimeout(removeAnimationClasses, 1000);
       })
       .catch((error) => {
         console.error("Error fetching weather data:", error);
         toast.warning("City not found. Please enter a valid city name.", {
-          position: "top-right", // Pozycja toastu
-          autoClose: 5000, // Czas wyświetlania w milisekundach (5 sekund)
+          position: "top-right", // toast position
+          autoClose: 5000, // toast display time
         });
       });
   };
@@ -65,12 +63,11 @@ export default function Home() {
         return "/clouds.png";
       case "Mist":
         return isNight ? "/fogNight.png" : "/fog.png";
-        case "Fog":
+      case "Fog":
         return isNight ? "/fogNight.png" : "/fog.png";
       case "Thunderstorm":
         return "/thunder.png";
     }
-    
   };
 
   //enter key event handler
@@ -82,10 +79,10 @@ export default function Home() {
 
   //check if it is night or day
   useEffect(() => {
-    const now = DateTime.now().setZone(timezone); // Użyj luxon do ustawienia strefy czasowej
+    const now = DateTime.now().setZone(timezone); // użyto luxon do ustawienia strefy czasowej
     const hour = now.hour;
-    setIsNight(hour >= 20 || hour < 6);
-  }, [timezone]); 
+    setIsNight(hour >= 18 || hour < 4);
+  }, [timezone]);
 
   return (
     <main className="h-screen flex items-center justify-center flex-col  ">
@@ -140,7 +137,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div class="absolute bottom-0 right-0 mr-2 font-bold text-sm pointer-events-none">
+      <div className="absolute bottom-0 right-0 mr-2 font-bold text-sm pointer-events-none">
         Copyright © 2023 Michał Obrębski. All Rights Reserved
       </div>
       <ToastContainer />
