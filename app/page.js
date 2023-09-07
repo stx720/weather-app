@@ -125,7 +125,7 @@ export default function Home() {
             value={city}
             onKeyPress={handleKeyPress}
             onChange={handleCityChange}
-            className="animate__animated animate__fadeInDown flex 2xl:text-base text-sm w-4/12 h-8 bg-gray-600 text-white pl-1 rounded-l-lg outline-none transition focus:outline-purple focus:border-purple-500 focus:bg-gray-200 focus:text-black  "
+            className="animate__animated animate__fadeInDown flex 2xl:text-base text-sm w-4/12 h-8 bg-gray-600 text-white pl-1 rounded-l-lg outline-none transition duration-500 focus:outline-purple focus:border-purple-500 focus:bg-gray-200 focus:text-black focus:duration-500  "
           />
           <button onClick={handleFetchWeather} className="mr-2">
             {" "}
