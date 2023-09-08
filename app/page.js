@@ -16,15 +16,11 @@ export default function Home() {
   const [isNight, setIsNight] = useState(false);
   const [timezone, setTimezone] = useState("");
   const [country, setCountry] = useState("");
-  const [isAnimating, setIsAnimating] = useState(false);
   const handleCityChange = (event) => {
     setCity(event.target.value);
     toast.dismiss();
   };
 
-  const removeAnimationClasses = () => {
-    setIsAnimating(false);
-  };
   const handleFetchWeather = () => {
     const api = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=ec35b4d54a274f524fa567c861ac8792`;
 
@@ -36,11 +32,8 @@ export default function Home() {
         setTemperature(temp);
         setCityName(name);
         setCurrentWeather(weather[0].main);
-        setIsAnimating(true);
         setTimezone(timezone);
         setCountry(sys.country);
-
-        setTimeout(removeAnimationClasses, 1000);
       })
       .catch((error) => {
         console.error("Error fetching weather data:", error);
