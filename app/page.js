@@ -60,8 +60,24 @@ export default function Home() {
         return isNight ? "/fogNight.png" : "/fog.png";
       case "Fog":
         return isNight ? "/fogNight.png" : "/fog.png";
+      case "Haze":
+        return isNight ? "/fogNight.png" : "/fog.png";
       case "Thunderstorm":
         return "/thunder.png";
+      case "Smoke":
+        return "/smoke.png";
+      case "Drizzle":
+        return "/drizzle.png";
+      case "Dust":
+        return "/dust.png";
+      case "Sand":
+        return "/dust.png";
+      case "Ash":
+        return "/ash.png";
+      case "Squall":
+        return "/squall.png";
+      case "Tornado":
+        return "/tornado.png";
     }
   };
 
