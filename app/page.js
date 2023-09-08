@@ -7,6 +7,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "animate.css";
 import { DateTime } from "luxon";
+import { IANAZone } from "luxon";
 
 export default function Home() {
   const [city, setCity] = useState("");
@@ -32,7 +33,8 @@ export default function Home() {
         setTemperature(temp);
         setCityName(name);
         setCurrentWeather(weather[0].main);
-        setTimezone(timezone);
+        const zone = IANAZone.create(`Etc/GMT${-timezone / 3600}`);
+        setTimezone(zone.name);
         setCountry(sys.country);
       })
       .catch((error) => {
@@ -74,7 +76,7 @@ export default function Home() {
   useEffect(() => {
     const now = DateTime.now().setZone(timezone); // used luxon to check the timezone
     const hour = now.hour;
-    setIsNight(hour >= 18 || hour < 4);
+    setIsNight(hour >= 20 || hour < 6);
   }, [timezone]);
 
   return (
