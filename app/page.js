@@ -41,6 +41,7 @@ export default function Home() {
         console.error("Error fetching weather data:", error);
         toast.warning("City not found. Please enter a valid city name.", {
           position: "top-right", // toast position
+          theme:"dark", // toast theme
           autoClose: 5000, // toast display time
         });
       });
