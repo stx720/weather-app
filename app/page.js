@@ -238,7 +238,7 @@ export default function Home() {
               width={32}
               height={32}
               alt="Picture of the author"
-              className="bg-blue-500 hover:bg-blue-300 rounded-r-lg animate__animated animate__fadeInDown   "
+              className="bg-blue-500 hover:bg-blue-300 rounded-r-lg animate__animated animate__fadeInDown h-8   "
             />
           </button>
         </div>
