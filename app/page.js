@@ -125,7 +125,7 @@ export default function Home() {
             }); //
 
             setSuggestions(uniqueSuggestions.slice(0, 3));
-    }, 1000);
+    }, 500);
   };
   const onSuggestionsClearRequested = () => {
     setSuggestions([]);
