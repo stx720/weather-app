@@ -26,8 +26,8 @@ export default function Home() {
     toast.dismiss();
   };
 
-  const handleFetchWeather = () => {
-    const api = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=ec35b4d54a274f524fa567c861ac8792`;
+  const handleFetchWeather = (selectedCity = city) => {
+    const api = `https://api.openweathermap.org/data/2.5/weather?q=${selectedCity}&units=metric&appid=ec35b4d54a274f524fa567c861ac8792`;
 
     axios
       .get(api)
@@ -135,7 +135,7 @@ export default function Home() {
     setValue(suggestion.name);
     setSuggestions([]);
     setCity(suggestion.name); // Set the selected city as the current input value
-    handleFetchWeather(); // Trigger weather fetch when a suggestion is selected
+    handleFetchWeather(suggestion.name); // Pass the full suggestion as an argument to the fetch function
   };
 
   const renderInputComponent = (inputProps) => (
