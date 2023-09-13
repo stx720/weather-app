@@ -101,10 +101,10 @@ export default function Home() {
       <h1 className="flex font-extrabold text-white mb-2 2xl:text-8xl text-7xl animate__animated animate__fadeInDown ">
         Weather
       </h1>
-      <div className="2xl:h-72 h-60 w-11/12 2xl:w-4/12 rounded-lg bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-1  ">
-        <div className=" h-full w-full bg-gray-800 flex items-center rounded-lg justify-center ">
+      <div className="2xl:h-72 h-60 min-w-fit w-11/12 2xl:w-4/12 lg:w-6/12  rounded-lg bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-1  ">
+        <div className="h-full w-full bg-gray-800 flex items-center rounded-lg justify-center ">
           {cityName && (
-            <div className="flex-col mr-10 ">
+            <div className="flex-col mr-14 ">
               <Image
                 src={getWeatherImage(currentWeather)}
                 width={96}
@@ -112,7 +112,7 @@ export default function Home() {
                 alt="Weather Icon"
                 className="mx-auto mb-2 animate__animated animate__zoomIn"
               />
-              <h1 className="text-white 2xl:text-4xl text-base whitespace-nowrap animate__animated animate__fadeInDown ml-1 ">
+              <h1 className="text-white 2xl:text-4xl lg:text-3xl md:text-xl text-base whitespace-nowrap animate__animated animate__fadeInDown ml-1 ">
                 {cityName}, {country}
               </h1>
 
@@ -134,7 +134,7 @@ export default function Home() {
             value={city}
             onKeyPress={handleKeyPress}
             onChange={handleCityChange}
-            className="animate__animated animate__fadeInDown flex 2xl:text-base text-sm w-4/12 h-8 bg-gray-600 text-white pl-1 rounded-l-lg outline-none transition duration-500 focus:outline-purple focus:border-purple-500 focus:bg-gray-200 focus:text-black focus:duration-500  "
+            className="mt-0 animate__animated animate__fadeInDown flex 2xl:text-base text-sm  w-4/12 h-8 bg-gray-600 text-white pl-1 rounded-l-lg outline-none transition duration-500 focus:outline-purple focus:border-purple-500 focus:bg-gray-200 focus:text-black focus:duration-500  "
           />
           <button onClick={handleFetchWeather} className="mr-2">
             {" "}
