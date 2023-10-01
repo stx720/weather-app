@@ -41,7 +41,7 @@ export default function Home() {
         console.error("Error fetching weather data:", error);
         toast.warning("City not found. Please enter a valid city name.", {
           position: "top-right", // toast position
-          theme:"dark", // toast theme
+          theme: "dark", // toast theme
           autoClose: 5000, // toast display time
         });
       });
@@ -104,7 +104,7 @@ export default function Home() {
       <div className="2xl:h-72 h-60 min-w-fit w-11/12 2xl:w-4/12 lg:w-6/12  rounded-lg bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-1  ">
         <div className="h-full w-full bg-gray-800 flex items-center rounded-lg justify-center ">
           {cityName && (
-            <div className="flex-col mr-14 ">
+            <div className="flex-col mr-14 ml-2 ">
               <Image
                 src={getWeatherImage(currentWeather)}
                 width={96}
@@ -143,7 +143,7 @@ export default function Home() {
               width={32}
               height={32}
               alt="Picture of the author"
-              className="bg-blue-500 hover:bg-blue-300 rounded-r-lg animate__animated animate__fadeInDown h-8   "
+              className="bg-blue-500 hover:bg-blue-300 rounded-r-lg animate__animated animate__fadeInDown h-8 mr-2  "
             />
           </button>
         </div>
