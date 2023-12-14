@@ -39,11 +39,19 @@ export default function Home() {
       })
       .catch((error) => {
         console.error("Error fetching weather data:", error);
-        toast.warning("City not found. Please enter a valid city name.", {
-          position: "top-right", // toast position
-          theme: "dark", // toast theme
-          autoClose: 5000, // toast display time
-        });
+        if (city == "") {
+          toast.error("The city name can't be empty.", {
+            position: "top-right", // toast position
+            theme: "dark", // toast theme
+            autoClose: 5000, // toast display time
+          });
+        } else {
+          toast.warning("City not found. Please enter a valid city name.", {
+            position: "top-right", // toast position
+            theme: "dark", // toast theme
+            autoClose: 5000, // toast display time
+          });
+        }
       });
   };
 
