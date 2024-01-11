@@ -8,6 +8,9 @@ import "react-toastify/dist/ReactToastify.css";
 import "animate.css";
 import { DateTime } from "luxon";
 import { IANAZone } from "luxon";
+import React from "react";
+
+import dynamic from "next/dynamic";
 
 export default function Home() {
   const [city, setCity] = useState("");
@@ -22,6 +25,7 @@ export default function Home() {
     toast.dismiss();
   };
 
+  const Clock = dynamic(() => import("react-live-clock"), { ssr: false });
   const handleFetchWeather = () => {
     const api = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=ec35b4d54a274f524fa567c861ac8792`;
 
@@ -160,6 +164,12 @@ export default function Home() {
       <div className="absolute bottom-0 right-0 mr-2 font-bold text-sm pointer-events-none">
         Copyright © 2023 Michał Obrębski. All Rights Reserved
       </div>
+      <Clock
+        className="absolute top-0 right-4 font-bold font-press-start-2p"
+        format={"HH:mm:ss"}
+        ticking={true}
+        timezone={Intl.DateTimeFormat().resolvedOptions().timeZone}
+      />
       <ToastContainer />
     </main>
   );
