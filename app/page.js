@@ -135,7 +135,7 @@ export default function Home() {
               ) : (
                 <p className="text-white"></p>
               )}
-              <h1 className="text-white 2xl:text-base text-sm animate__animated animate__fadeInDown ml-1">
+              <h1 className="text-white 2xl:text-base ml-2 text-sm animate__animated animate__fadeInDown ml-1">
                 {currentWeather}
               </h1>
             </div>
@@ -165,7 +165,7 @@ export default function Home() {
         Copyright © 2023 Michał Obrębski. All Rights Reserved
       </div>
       <Clock
-        className="absolute top-0 right-4 font-bold font-press-start-2p"
+        className="font-custom text-white absolute top-3 right-4 font-bold"
         format={"HH:mm:ss"}
         ticking={true}
         timezone={Intl.DateTimeFormat().resolvedOptions().timeZone}
