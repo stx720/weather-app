@@ -13,6 +13,7 @@ import React from "react";
 import dynamic from "next/dynamic";
 
 export default function Home() {
+  const [currentTime, setCurrentTime] = useState(null);
   const [city, setCity] = useState("");
   const [cityName, setCityName] = useState(null);
   const [temperature, setTemperature] = useState(null);
@@ -37,7 +38,13 @@ export default function Home() {
         setTemperature(temp);
         setCityName(name);
         setCurrentWeather(weather[0].main);
-        const zone = IANAZone.create(`Etc/GMT${-timezone / 3600}`);
+        const offsetHours = -timezone / 3600;
+        const sign = offsetHours >= 0 ? "+" : "-";
+        const zoneIdentifier = `Etc/GMT${sign}${Math.abs(offsetHours)}`;
+        const zone = IANAZone.create(zoneIdentifier);
+        const currentDateTime = DateTime.now().setZone(zone);
+        setCurrentTime(currentDateTime);
+        console.log(zone);
         setTimezone(zone.name);
         setCountry(sys.country);
       })
@@ -103,11 +110,13 @@ export default function Home() {
 
   //check if it is night or day
   useEffect(() => {
-    const now = DateTime.now().setZone(timezone); // used luxon to check the timezone
+    console.log(timezone);
+    const now = DateTime.now().setZone(timezone);
+    console.log(now);
     const hour = now.hour;
+    console.log(hour);
     setIsNight(hour >= 20 || hour < 6);
   }, [timezone]);
-
   return (
     <main className="h-screen flex items-center justify-center flex-col  ">
       <h1 className="flex font-extrabold text-white mb-2 2xl:text-8xl text-7xl animate__animated animate__fadeInDown ">
@@ -135,8 +144,11 @@ export default function Home() {
               ) : (
                 <p className="text-white"></p>
               )}
-              <h1 className="text-white 2xl:text-base ml-2 text-sm animate__animated animate__fadeInDown ml-1">
+              <h1 className="text-white 2xl:text-base ml-2 text-sm animate__animated animate__fadeInDown">
                 {currentWeather}
+              </h1>
+              <h1 className="text-white 2xl:text-base ml-2 text-sm animate__animated animate__fadeInDown">
+                Time: {currentTime.toLocaleString(DateTime.TIME_SIMPLE)}
               </h1>
             </div>
           )}
