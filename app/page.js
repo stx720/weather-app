@@ -21,12 +21,13 @@ export default function Home() {
   const [isNight, setIsNight] = useState(false);
   const [timezone, setTimezone] = useState("");
   const [country, setCountry] = useState("");
+  const [sunriseTime, setSunriseTime] = useState(null);
+  const [sunsetTime, setSunsetTime] = useState(null);
   const handleCityChange = (event) => {
     setCity(event.target.value);
     toast.dismiss();
   };
 
-  const Clock = dynamic(() => import("react-live-clock"), { ssr: false });
   const handleFetchWeather = () => {
     const api = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=ec35b4d54a274f524fa567c861ac8792`;
 
@@ -47,6 +48,14 @@ export default function Home() {
         console.log(zone);
         setTimezone(zone.name);
         setCountry(sys.country);
+
+        const { sunrise, sunset } = sys;
+        const sunriseTime = DateTime.fromSeconds(sunrise).setZone(zone);
+        const sunsetTime = DateTime.fromSeconds(sunset).setZone(zone);
+
+        // Update state with sunrise and sunset
+        setSunriseTime(sunriseTime);
+        setSunsetTime(sunsetTime);
       })
       .catch((error) => {
         console.error("Error fetching weather data:", error);
@@ -139,17 +148,29 @@ export default function Home() {
 
               {temperature !== null ? (
                 <h1 className="text-white 2xl:text-2xl text-base mt-2 animate__animated animate__fadeInDown ml-1">
-                  {temperature.toFixed(1)}°C
+                  🌡️{temperature.toFixed(1)}°C
                 </h1>
               ) : (
                 <p className="text-white"></p>
               )}
-              <h1 className="text-white 2xl:text-base ml-2 text-sm animate__animated animate__fadeInDown">
+              <h1 className="text-white 2xl:text-base ml-1 text-sm animate__animated animate__fadeInDown">
                 {currentWeather}
               </h1>
               <h1 className="text-white 2xl:text-base ml-2 text-sm animate__animated animate__fadeInDown">
-                Time: {currentTime.toLocaleString(DateTime.TIME_SIMPLE)}
+                🕒Time: {currentTime.toLocaleString(DateTime.TIME_SIMPLE)}
               </h1>
+              {sunriseTime && (
+                <>
+                  <div className="flex flex-row">
+                    <h1 className="text-white 2xl:text-base ml-2 text-sm animate__animated animate__fadeInDown">
+                      ☀ {sunriseTime.toLocaleString(DateTime.TIME_SIMPLE)}
+                    </h1>
+                    <h1 className="text-white 2xl:text-base ml-2 text-sm animate__animated animate__fadeInDown">
+                      🌙 {sunsetTime.toLocaleString(DateTime.TIME_SIMPLE)}
+                    </h1>
+                  </div>
+                </>
+              )}
             </div>
           )}
           <input
@@ -176,12 +197,6 @@ export default function Home() {
       <div className="absolute bottom-0 right-0 mr-2 font-bold text-sm pointer-events-none">
         Copyright © 2023 Michał Obrębski. All Rights Reserved
       </div>
-      <Clock
-        className="font-custom text-white absolute top-3 right-4 font-bold"
-        format={"HH:mm:ss"}
-        ticking={true}
-        timezone={Intl.DateTimeFormat().resolvedOptions().timeZone}
-      />
       <ToastContainer />
     </main>
   );
