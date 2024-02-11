@@ -131,8 +131,8 @@ export default function Home() {
       <h1 className="flex font-extrabold text-white mb-2 2xl:text-8xl text-7xl animate__animated animate__fadeInDown ">
         Weather
       </h1>
-      <div className="2xl:h-72 h-60 min-w-fit w-11/12 2xl:w-4/12 lg:w-6/12  rounded-lg bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-1  ">
-        <div className="h-full w-full bg-gray-800 flex items-center rounded-lg justify-center ">
+      <div className="2xl:h-72 h-60 min-w-fit w-11/12 2xl:w-4/12 lg:w-6/12  rounded-lg bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-1 scale-95  ">
+        <div className="h-full w-full bg-gray-800 flex items-center rounded-lg justify-center  ">
           {cityName && (
             <div className="flex-col mr-14 ml-2 ">
               <Image
@@ -142,12 +142,12 @@ export default function Home() {
                 alt="Weather Icon"
                 className="mx-auto mb-2 animate__animated animate__zoomIn"
               />
-              <h1 className="text-white 2xl:text-4xl lg:text-3xl md:text-xl text-base whitespace-nowrap animate__animated animate__fadeInDown ml-1 ">
+              <h1 className="text-white 2xl:text-4xl lg:text-3xl md:text-xl text-xl font-semibold whitespace-nowrap animate__animated animate__fadeInDown ml-1 ">
                 {cityName}, {country}
               </h1>
 
               {temperature !== null ? (
-                <h1 className="text-white 2xl:text-2xl text-base mt-2 animate__animated animate__fadeInDown ml-1">
+                <h1 className="text-white 2xl:text-2xl text-base lg:mt-2 animate__animated animate__fadeInDown">
                   🌡️{temperature.toFixed(1)}°C
                 </h1>
               ) : (
