@@ -4,6 +4,7 @@
     "": {
       "name": "weather-app",
       "dependencies": {
+        "24": "^0.0.0",
         "animate.css": "^4.1.1",
         "autoprefixer": "10.4.15",
         "axios": "^1.13.4",
@@ -22,6 +23,8 @@
     },
   },
   "packages": {
+    "24": ["24@0.0.0", "", {}, "sha512-dgRd1Jm77CFbawoAu4/37jJCl4LjQVzfACgUVyGeN7OG1qHKsEeTEyvPvzsK0FF59F/uJ1eq2wsrO+U+Sa028Q=="],
+
     "@alloc/quick-lru": ["@alloc/quick-lru@5.2.0", "", {}, "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw=="],
 
     "@emnapi/runtime": ["@emnapi/runtime@1.8.1", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-mehfKSMWjjNol8659Z8KxEMrdSJDDot5SXMq00dM8BN4o+CLNXQ0xH2V7EchNHV4RmbZLmmPdEaXZc5H2FXmDg=="],
