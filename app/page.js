@@ -1,203 +1,385 @@
 "use client";
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import axios from "axios";
-import { toast } from "react-toastify";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import "animate.css";
-import { DateTime } from "luxon";
-import { IANAZone } from "luxon";
-import React from "react";
+import { toast, Toaster } from "react-hot-toast";
+import { DateTime, IANAZone } from "luxon";
 
-import dynamic from "next/dynamic";
+// --- Icons ---
+const SearchIcon = () => (
+  <svg
+    width="20"
+    height="20"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    strokeWidth={2.5}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+    />
+  </svg>
+);
 
-export default function Home() {
-  const [currentTime, setCurrentTime] = useState(null);
-  const [city, setCity] = useState("");
-  const [cityName, setCityName] = useState(null);
-  const [temperature, setTemperature] = useState(null);
-  const [currentWeather, setCurrentWeather] = useState(null);
-  const [isNight, setIsNight] = useState(false);
-  const [timezone, setTimezone] = useState("");
-  const [country, setCountry] = useState("");
-  const [sunriseTime, setSunriseTime] = useState(null);
-  const [sunsetTime, setSunsetTime] = useState(null);
-  const handleCityChange = (event) => {
-    setCity(event.target.value);
-    toast.dismiss();
+const SunUp = () => (
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+    <defs>
+      <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
+        <stop stopColor="#FBbf24" />
+        <stop offset="1" stopColor="#F59e0b" />
+      </linearGradient>
+    </defs>
+    <path
+      d="M12 4V8M6.34 9.66L9.17 12.49M17.66 9.66L14.83 12.49"
+      stroke="#FBbf24"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+    <path
+      d="M4 18H20M12 18V13M9 16L12 13L15 16"
+      stroke="white"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeOpacity="0.5"
+    />
+    <circle cx="12" cy="12" r="4" fill="url(#g1)" fillOpacity="0.2" />
+  </svg>
+);
+const SunDown = () => (
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+    <defs>
+      <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
+        <stop stopColor="#F97316" />
+        <stop offset="1" stopColor="#EA580C" />
+      </linearGradient>
+    </defs>
+    <path
+      d="M12 4V8M4 18H20M12 13V18M9 15L12 18L15 15"
+      stroke="white"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeOpacity="0.5"
+    />
+    <circle cx="12" cy="10" r="4" fill="url(#g2)" />
+  </svg>
+);
+const Clock = () => (
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="12" r="9" stroke="#3B82F6" strokeWidth="2" />
+    <path
+      d="M12 7V12L15 15"
+      stroke="white"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+    <circle cx="12" cy="12" r="2" fill="#3B82F6" />
+  </svg>
+);
+const Thermometer = () => (
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+    <defs>
+      <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1">
+        <stop stopColor="#EF4444" />
+        <stop offset="1" stopColor="#B91C1C" />
+      </linearGradient>
+    </defs>
+    <path
+      d="M14 14.76V3.5A2.5 2.5 0 0 0 9 3.5v11.26a4.5 4.5 0 1 0 5 0z"
+      stroke="white"
+      strokeWidth="2"
+    />
+    <path
+      d="M11.5 8V16"
+      stroke="url(#g3)"
+      strokeWidth="3"
+      strokeLinecap="round"
+    />
+    <circle cx="11.5" cy="17.5" r="2" fill="#EF4444" />
+  </svg>
+);
+
+const Slot = ({ v1, v2, on }) => (
+  <div
+    className="relative overflow-hidden inline-block align-top"
+    style={{ height: "1.2em", minWidth: "1px" }}
+  >
+    <div
+      className="flex flex-col transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+      style={{ transform: on ? "translateY(0)" : "translateY(-50%)" }}
+    >
+      <div className="h-[1.2em] flex items-center justify-center whitespace-nowrap leading-none">
+        {v1}
+      </div>
+      <div className="h-[1.2em] flex items-center justify-center whitespace-nowrap leading-none">
+        {v2}
+      </div>
+    </div>
+  </div>
+);
+
+export default function Page() {
+  const [q, setQ] = useState("");
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [isNight, setNight] = useState(false);
+  const [celsius, setCelsius] = useState(true);
+  const [fmt24, setFmt24] = useState(true);
+
+  const getImg = (type) => {
+    const m = {
+      Snow: "/snow.png",
+      Rain: "/rain.png",
+      Drizzle: "/drizzle.png",
+      Thunderstorm: "/thunder.png",
+      Clouds: "/clouds.png",
+      Smog: "/smoke.png",
+      Dust: "/dust.png",
+      Tornado: "/tornado.png",
+      Mist: isNight ? "/fogNight.png" : "/fog.png",
+      Fog: isNight ? "/fogNight.png" : "/fog.png",
+      Clear: isNight ? "/clearNight.png" : "/clear.png",
+    };
+    return m[type] || m.Clear;
   };
 
-  const handleFetchWeather = () => {
-    const api = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=ec35b4d54a274f524fa567c861ac8792`;
+  const search = async (e) => {
+    e?.preventDefault();
+    if (!q?.trim()) return toast("Enter a city name! 🌍", { icon: "⚠️" });
+    setLoading(true);
 
-    axios
-      .get(api)
-      .then((response) => {
-        const { main, name, weather, timezone, sys } = response.data;
-        const { temp } = main;
-        setTemperature(temp);
-        setCityName(name);
-        setCurrentWeather(weather[0].main);
-        const offsetHours = -timezone / 3600;
-        const sign = offsetHours >= 0 ? "+" : "-";
-        const zoneIdentifier = `Etc/GMT${sign}${Math.abs(offsetHours)}`;
-        const zone = IANAZone.create(zoneIdentifier);
-        const currentDateTime = DateTime.now().setZone(zone);
-        setCurrentTime(currentDateTime);
-        console.log(zone);
-        setTimezone(zone.name);
-        setCountry(sys.country);
+    try {
+      const res = await axios.get(
+        `https://api.openweathermap.org/data/2.5/weather?q=${q.trim()}&units=metric&appid=ec35b4d54a274f524fa567c861ac8792`,
+        { validateStatus: (s) => s < 500 },
+      );
+      if (res.status === 404) {
+        setLoading(false);
+        return toast.error("City not found 😔");
+      }
+      if (res.status !== 200) {
+        setLoading(false);
+        return toast.error("Something went wrong ⚠️");
+      }
 
-        const { sunrise, sunset } = sys;
-        const sunriseTime = DateTime.fromSeconds(sunrise).setZone(zone);
-        const sunsetTime = DateTime.fromSeconds(sunset).setZone(zone);
+      const d = res.data;
+      const hours = d.timezone / 3600;
+      const zone = `Etc/GMT${hours >= 0 ? "-" : "+"}${Math.abs(hours)}`; // IANA sign flip
+      let zoneName = "UTC";
+      try {
+        zoneName = IANAZone.create(zone).name;
+      } catch {}
 
-        // Update state with sunrise and sunset
-        setSunriseTime(sunriseTime);
-        setSunsetTime(sunsetTime);
-      })
-      .catch((error) => {
-        console.error("Error fetching weather data:", error);
-        if (city == "") {
-          toast.error("The city name can't be empty.", {
-            position: "top-right", // toast position
-            theme: "dark", // toast theme
-            autoClose: 5000, // toast display time
-          });
-        } else {
-          toast.warning("City not found. Please enter a valid city name.", {
-            position: "top-right", // toast position
-            theme: "dark", // toast theme
-            autoClose: 5000, // toast display time
-          });
-        }
+      const now = DateTime.now().setZone(zoneName);
+
+      setData({
+        name: d.name,
+        country: d.sys.country,
+        temp: {
+          c: Math.round(d.main.temp),
+          f: Math.round(d.main.temp * 1.8 + 32),
+        },
+        feels: {
+          c: Math.round(d.main.feels_like),
+          f: Math.round(d.main.feels_like * 1.8 + 32),
+        },
+        desc: d.weather[0].description,
+        main: d.weather[0].main,
+        zone: zoneName,
+        time: {
+          current: now.toISO(),
+          sunrise: DateTime.fromSeconds(d.sys.sunrise)
+            .setZone(zoneName)
+            .toISO(),
+          sunset: DateTime.fromSeconds(d.sys.sunset).setZone(zoneName).toISO(),
+        },
       });
-  };
-
-  const getWeatherImage = (description) => {
-    switch (description) {
-      case "Snow":
-        return "/snow.png";
-      case "Clear":
-        return isNight ? "/clearNight.png" : "/clear.png";
-      case "Rain":
-        return "/rain.png";
-      case "Clouds":
-        return "/clouds.png";
-      case "Mist":
-        return isNight ? "/fogNight.png" : "/fog.png";
-      case "Fog":
-        return isNight ? "/fogNight.png" : "/fog.png";
-      case "Haze":
-        return isNight ? "/fogNight.png" : "/fog.png";
-      case "Thunderstorm":
-        return "/thunder.png";
-      case "Smoke":
-        return "/smoke.png";
-      case "Drizzle":
-        return "/drizzle.png";
-      case "Dust":
-        return "/dust.png";
-      case "Sand":
-        return "/dust.png";
-      case "Ash":
-        return "/ash.png";
-      case "Squall":
-        return "/squall.png";
-      case "Tornado":
-        return "/tornado.png";
+      setNight(now.hour >= 20 || now.hour < 6);
+    } catch (err) {
+      toast.error("Network error ⚠️");
+    } finally {
+      setLoading(false);
     }
   };
 
-  //enter key event handler
-  const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
-      handleFetchWeather();
-    }
+  const getTime = (iso) => {
+    if (!iso || !data) return ["--:--", "--:--"];
+    const dt = DateTime.fromISO(iso).setZone(data.zone);
+    return [dt.toFormat("HH:mm"), dt.toFormat("h:mm a")];
   };
 
-  //check if it is night or day
-  useEffect(() => {
-    console.log(timezone);
-    const now = DateTime.now().setZone(timezone);
-    console.log(now);
-    const hour = now.hour;
-    console.log(hour);
-    setIsNight(hour >= 20 || hour < 6);
-  }, [timezone]);
   return (
-    <main className="h-screen flex items-center justify-center flex-col  ">
-      <h1 className="flex font-extrabold text-white mb-2 2xl:text-8xl text-7xl animate__animated animate__fadeInDown ">
-        Weather
-      </h1>
-      <div className="2xl:h-72 h-60 min-w-fit w-11/12 2xl:w-4/12 lg:w-6/12  rounded-lg bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-1 scale-95  ">
-        <div className="h-full w-full bg-gray-800 flex items-center rounded-lg justify-center  ">
-          {cityName && (
-            <div className="flex-col mr-14 ml-2 ">
-              <Image
-                src={getWeatherImage(currentWeather)}
-                width={96}
-                height={96}
-                alt="Weather Icon"
-                className="mx-auto mb-2 animate__animated animate__zoomIn"
-              />
-              <h1 className="text-white 2xl:text-4xl lg:text-3xl md:text-xl text-xl font-semibold whitespace-nowrap animate__animated animate__fadeInDown ml-1 ">
-                {cityName}, {country}
-              </h1>
+    <main className="flex min-h-screen flex-col items-center justify-center p-4 relative overflow-hidden">
+      <div className="text-center mb-10 w-full max-w-2xl relative z-10 animate-fade-in-up">
+        <h1
+          className="party-glow-text text-6xl md:text-8xl font-bold tracking-tighter mb-2"
+          data-text="Weather"
+        >
+          Weather
+        </h1>
+        <p className="text-white/60 text-xs tracking-[0.3em] font-light uppercase">
+          Real-time Forecasts
+        </p>
+      </div>
 
-              {temperature !== null ? (
-                <h1 className="text-white 2xl:text-2xl text-base lg:mt-2 animate__animated animate__fadeInDown">
-                  🌡️{temperature.toFixed(1)}°C
-                </h1>
-              ) : (
-                <p className="text-white"></p>
-              )}
-              <h1 className="text-white 2xl:text-base ml-1 text-sm animate__animated animate__fadeInDown">
-                {currentWeather}
-              </h1>
-              <h1 className="text-white 2xl:text-base ml-2 text-sm animate__animated animate__fadeInDown">
-                🕒Time: {currentTime.toLocaleString(DateTime.TIME_SIMPLE)}
-              </h1>
-              {sunriseTime && (
-                <>
-                  <div className="flex flex-row">
-                    <h1 className="text-white 2xl:text-base ml-2 text-sm animate__animated animate__fadeInDown">
-                      ☀ {sunriseTime.toLocaleString(DateTime.TIME_SIMPLE)}
-                    </h1>
-                    <h1 className="text-white 2xl:text-base ml-2 text-sm animate__animated animate__fadeInDown">
-                      🌙 {sunsetTime.toLocaleString(DateTime.TIME_SIMPLE)}
-                    </h1>
-                  </div>
-                </>
-              )}
-            </div>
+      <form
+        onSubmit={search}
+        className="search-container z-20 mb-8 w-full max-w-md animate-fade-in-up delay-100"
+      >
+        <input
+          type="text"
+          placeholder="Search for a city..."
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          className="search-input"
+        />
+        <button type="submit" disabled={loading} className="search-button">
+          {loading ? (
+            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          ) : (
+            <SearchIcon />
           )}
-          <input
-            type="text"
-            placeholder="Search city..."
-            value={city}
-            onKeyPress={handleKeyPress}
-            onChange={handleCityChange}
-            className="mt-0 animate__animated animate__fadeInDown flex 2xl:text-base text-sm  w-4/12 h-8 bg-gray-600 text-white pl-1 rounded-l-lg outline-none transition duration-500 focus:outline-purple focus:border-purple-500 focus:bg-gray-200 focus:text-black focus:duration-500  "
-          />
-          <button onClick={handleFetchWeather} className="mr-2">
-            {" "}
-            <Image
-              src="/search.svg"
-              width={32}
-              height={32}
-              alt="Picture of the author"
-              className="bg-blue-500 hover:bg-blue-300 rounded-r-lg animate__animated animate__fadeInDown h-8 mr-2  "
-            />
-          </button>
-        </div>
-      </div>
+        </button>
+      </form>
 
-      <div className="absolute bottom-0 right-0 mr-2 font-bold text-sm pointer-events-none">
-        Copyright © 2023 Michał Obrębski. All Rights Reserved
-      </div>
-      <ToastContainer />
+      {data && (
+        <div
+          key={data.name}
+          className="glass-card w-full max-w-md p-6 md:p-8 animate-pop-in relative z-10 origin-center"
+        >
+          <div className="flex justify-end items-center gap-2 mb-2 absolute top-6 right-6 z-20">
+            <button className="slot-btn" onClick={() => setCelsius(!celsius)}>
+              <Slot v1="°C" v2="°F" on={celsius} />
+            </button>
+            <button
+              className="slot-btn"
+              style={{ minWidth: "50px" }}
+              onClick={() => setFmt24(!fmt24)}
+            >
+              <Slot v1="24H" v2="12H" on={fmt24} />
+            </button>
+          </div>
+
+          <div className="h-8 mb-4"></div>
+
+          <div className="flex justify-between items-start mb-4">
+            <div>
+              <h2 className="text-4xl font-bold text-white mb-1 tracking-tight">
+                {data.name}
+                <span className="ml-2 text-xl font-light text-white/50">
+                  {data.country}
+                </span>
+              </h2>
+              <p className="text-white/80 capitalize text-lg tracking-wide">
+                {data.desc}
+              </p>
+            </div>
+            <div className="relative -top-0 -right-2 animate-[float-y_4s_ease-in-out_infinite]">
+              <Image
+                src={getImg(data.main)}
+                width={120}
+                height={120}
+                alt={data.main}
+                className="drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+                priority
+              />
+            </div>
+          </div>
+
+          <div className="text-center mb-10 relative flex justify-center">
+            <h3 className="font-display text-[7rem] md:text-[8rem] leading-none font-bold text-white drop-shadow-2xl flex items-center justify-center">
+              <Slot
+                v1={data.temp.c + "°"}
+                v2={data.temp.f + "°"}
+                on={celsius}
+              />
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-white/5 hover:bg-white/10 transition-colors rounded-2xl p-4 flex items-center gap-4 border border-white/5">
+              <Clock />
+              <div>
+                <p className="text-xs text-white/50 uppercase tracking-widest font-semibold mb-1">
+                  Local Time
+                </p>
+                <div className="font-mono text-xl text-white font-medium">
+                  <Slot
+                    v1={getTime(data.time.current)[0]}
+                    v2={getTime(data.time.current)[1]}
+                    on={fmt24}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="bg-white/5 hover:bg-white/10 transition-colors rounded-2xl p-4 flex items-center gap-4 border border-white/5">
+              <Thermometer />
+              <div>
+                <p className="text-xs text-white/50 uppercase tracking-widest font-semibold mb-1">
+                  Feels Like
+                </p>
+                <div className="font-mono text-xl text-white font-medium">
+                  <Slot
+                    v1={data.feels.c + "°"}
+                    v2={data.feels.f + "°"}
+                    on={celsius}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="bg-white/5 hover:bg-white/10 transition-colors rounded-2xl p-4 flex items-center gap-4 border border-white/5">
+              <SunUp />
+              <div>
+                <p className="text-xs text-white/50 uppercase tracking-widest font-semibold mb-1">
+                  Sunrise
+                </p>
+                <div className="font-mono text-xl text-white font-medium">
+                  <Slot
+                    v1={getTime(data.time.sunrise)[0]}
+                    v2={getTime(data.time.sunrise)[1]}
+                    on={fmt24}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="bg-white/5 hover:bg-white/10 transition-colors rounded-2xl p-4 flex items-center gap-4 border border-white/5">
+              <SunDown />
+              <div>
+                <p className="text-xs text-white/50 uppercase tracking-widest font-semibold mb-1">
+                  Sunset
+                </p>
+                <div className="font-mono text-xl text-white font-medium">
+                  <Slot
+                    v1={getTime(data.time.sunset)[0]}
+                    v2={getTime(data.time.sunset)[1]}
+                    on={fmt24}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <footer className="fixed bottom-4 text-white/10 text-[10px] uppercase tracking-widest text-center w-full pointer-events-none">
+        © {new Date().getFullYear()} Weather App
+      </footer>
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          style: {
+            background: "rgba(20,20,30,0.9)",
+            backdropFilter: "blur(12px)",
+            border: "1px solid rgba(255,255,255,0.2)",
+            color: "#fff",
+            borderRadius: "16px",
+            fontSize: "14px",
+            padding: "12px 16px",
+          },
+          containerStyle: { zIndex: 99999 },
+        }}
+      />
     </main>
   );
 }
