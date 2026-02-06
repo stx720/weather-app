@@ -1,5 +1,6 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
+import FluidCursorEffect from "@/components/ui/FluidCursor";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,6 +20,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className={inter.className}>
+        <FluidCursorEffect />
         <div className="animated-bg">
           <div className="blob blob-1"></div>
           <div className="blob blob-2"></div>
